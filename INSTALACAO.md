@@ -23,7 +23,7 @@ Crie (ou confirme que já tem) estas contas. Todas são gratuitas:
 | Conta | Para quê | Onde criar |
 |---|---|---|
 | **Claude** | o assistente que vai instalar tudo | [claude.com](https://claude.com) |
-| **Neon** | o banco de dados onde ficam seus lançamentos | [neon.tech](https://neon.tech) (pode entrar com Google) |
+| **Supabase** | o banco de dados onde ficam seus lançamentos | [supabase.com](https://supabase.com) (pode entrar com Google ou GitHub) |
 | **Vercel** | o site que hospeda o app | [vercel.com](https://vercel.com) (pode entrar com Google) |
 
 ---
@@ -62,7 +62,7 @@ Copie o texto abaixo inteiro e cole na conversa do Claude Code:
 > do GitHub), leia o arquivo CLAUDE.md (ou AGENTS.md) e siga o roteiro de instalação de lá.
 >
 > Sou leigo em programação: me guie passo a passo em linguagem simples,
-> dizendo exatamente onde clicar. Já criei minhas contas na Neon e na Vercel.
+> dizendo exatamente onde clicar. Já criei minhas contas no Supabase e na Vercel.
 
 O Claude vai trabalhar e, de vez em quando, pedir sua permissão para executar
 um comando — pode **aprovar**; é assim que ele faz a parte técnica por você.
@@ -71,9 +71,9 @@ um comando — pode **aprovar**; é assim que ele faz a parte técnica por você
 
 Durante a instalação, o Claude precisa de 2 coisas que só você pode fazer:
 
-**1. A "connection string" do banco (Neon)**
-- Entre em [neon.tech](https://neon.tech) → crie um projeto (qualquer nome)
-- Clique no botão **Connect** e copie o texto que começa com `postgresql://`
+**1. A "connection string" do banco (Supabase)**
+- Entre em [supabase.com](https://supabase.com) → crie um projeto (qualquer nome)
+- Clique no botão **Connect**, escolha **Transaction pooler** e copie o texto que começa com `postgresql://` (troque `[YOUR-PASSWORD]` pela senha do projeto)
 - Cole na conversa quando o Claude pedir
 
 **2. Autorizar a Vercel**

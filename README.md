@@ -30,7 +30,7 @@ própria cópia, com banco de dados próprio — seus dados são só seus.
 - **Modo escuro**: claro, escuro ou automático
 - Vários usuários por instalação (cada login tem seus próprios dados)
 
-**Stack:** Next.js 15 + TypeScript · Postgres ([Neon](https://neon.tech), grátis)
+**Stack:** Next.js 15 + TypeScript · Postgres ([Supabase](https://supabase.com), grátis)
 · NextAuth · hospedagem na [Vercel](https://vercel.com) (grátis)
 
 ---
@@ -40,9 +40,9 @@ própria cópia, com banco de dados próprio — seus dados são só seus.
 > 🧑‍🏫 **Nunca programou?** Siga o **[guia para iniciantes](INSTALACAO.md)** —
 > o Claude Code (ou o Codex) instala tudo para você, sem usar terminal.
 
-### 1. Crie o banco de dados (Neon)
+### 1. Crie o banco de dados (Supabase)
 
-1. Crie uma conta em [neon.tech](https://neon.tech) e um projeto novo
+1. Crie uma conta em [supabase.com](https://supabase.com) e um projeto novo
 2. Abra o **SQL Editor**, cole todo o conteúdo de [`db/schema.sql`](db/schema.sql)
    e execute
 3. Clique em **Connect** e copie a *connection string*
@@ -50,14 +50,14 @@ própria cópia, com banco de dados próprio — seus dados são só seus.
 
 ### 2. Faça o deploy (Vercel)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjunoorb36-bot%2Fminhas-financas&env=DATABASE_URL,AUTH_SECRET&envDescription=DATABASE_URL%20%3D%20connection%20string%20do%20Neon%20%C2%B7%20AUTH_SECRET%20%3D%20valor%20aleat%C3%B3rio%20longo&project-name=minhas-financas&repository-name=minhas-financas)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjunoorb36-bot%2Fminhas-financas&env=DATABASE_URL,AUTH_SECRET&envDescription=DATABASE_URL%20%3D%20connection%20string%20do%20Supabase%20(Transaction%20pooler)%20%C2%B7%20AUTH_SECRET%20%3D%20valor%20aleat%C3%B3rio%20longo&project-name=minhas-financas&repository-name=minhas-financas)
 
 O botão acima clona este repositório para o **seu** GitHub e faz o deploy na
 **sua** conta Vercel. Durante o processo, preencha:
 
 | Variável | Valor |
 |---|---|
-| `DATABASE_URL` | a connection string do Neon (passo 1) |
+| `DATABASE_URL` | a connection string do Supabase, "Transaction pooler" (passo 1) |
 | `AUTH_SECRET` | um segredo aleatório — gere com `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` ou digite 40+ caracteres aleatórios |
 
 ### 3. Pronto!
@@ -124,7 +124,7 @@ estiver configurado, o bot avisa.
 ## 🔄 Atualizando uma instalação antiga
 
 Só para quem instalou **antes de setembro de 2026**: ao puxar uma versão nova,
-rode no SQL Editor do Neon os arquivos de [`db/migrations/`](db/migrations) que ainda
+rode no SQL Editor do Supabase os arquivos de [`db/migrations/`](db/migrations) que ainda
 não aplicou (são seguros para rodar mais de uma vez) e faça o *Redeploy* na Vercel.
 Instalações novas não precisam deles: o `db/schema.sql` já traz tudo.
 

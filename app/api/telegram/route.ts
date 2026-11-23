@@ -30,7 +30,7 @@ async function tg(method: string, payload: Record<string, unknown>) {
 const reply = (chat_id: number, text: string) => tg('sendMessage', { chat_id, text });
 
 async function userIdDoDono(): Promise<string | null> {
-  const users = await sql`select id from users where login = ${process.env.TELEGRAM_USER_LOGIN}`;
+  const users = await sql`select id from users where login = ${process.env.TELEGRAM_USER_LOGIN ?? null}`;
   return (users[0]?.id as string) ?? null;
 }
 

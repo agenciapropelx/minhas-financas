@@ -1,4 +1,4 @@
--- Minhas Finanças — schema para Neon (Postgres). Rodar no SQL Editor do Neon.
+-- Minhas Finanças — schema para Postgres (Supabase). Aplicar com scripts/apply-schema.mjs ou no SQL Editor.
 
 create table users (
   id uuid primary key default gen_random_uuid(),
@@ -67,3 +67,11 @@ create table telegram_pending (
 create index idx_transactions_user_month on transactions (user_id, month);
 create index idx_budgets_user_month on budgets (user_id, month);
 create index idx_transactions_grupo on transactions (grupo);
+
+-- Supabase: bloqueia a API pública (ver db/migrations/003-supabase-rls.sql).
+alter table users enable row level security;
+alter table months enable row level security;
+alter table transactions enable row level security;
+alter table cards enable row level security;
+alter table budgets enable row level security;
+alter table telegram_pending enable row level security;

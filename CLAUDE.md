@@ -1,7 +1,7 @@
 # Minhas Finanças — guia para agentes (Claude Code / Cowork)
 
 Sistema de finanças pessoais auto-hospedado: Next.js 15 + TypeScript, Postgres
-(Neon), NextAuth (login único sem senha), deploy na Vercel, bot do Telegram
+(Supabase), NextAuth (login único sem senha), deploy na Vercel, bot do Telegram
 opcional. Detalhes de uso no [README.md](README.md).
 
 ## Se o usuário pedir para "instalar" o sistema
@@ -9,8 +9,9 @@ opcional. Detalhes de uso no [README.md](README.md).
 Você consegue executar quase tudo; o usuário só precisa agir onde há conta
 pessoal dele. Roteiro que funciona:
 
-1. **Banco (Neon)** — peça ao usuário para criar um projeto grátis em
-   https://neon.tech e colar aqui a connection string (`postgresql://...`).
+1. **Banco (Supabase)** — peça ao usuário para criar um projeto grátis em
+   https://supabase.com (botão Connect → **Transaction pooler**, porta 6543; a conexão
+   direta é só IPv6 e não funciona na Vercel) e colar aqui a connection string (`postgresql://...`).
    Aplique o schema você mesmo:
    `DATABASE_URL="<string>" node scripts/apply-schema.mjs`
    (idempotente não é — se as tabelas já existem, o script falha; nesse caso o
