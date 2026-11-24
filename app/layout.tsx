@@ -2,7 +2,11 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import Providers from '@/components/Providers';
 
-export const metadata: Metadata = { title: 'Minhas Finanças' };
+export const metadata: Metadata = {
+  title: 'Minhas Finanças',
+  // nome curto sob o ícone na tela de início do iPhone
+  appleWebApp: { capable: true, title: 'Finanças', statusBarStyle: 'default' },
+};
 export const viewport: Viewport = { themeColor: '#217a54' };
 
 // aplica o tema salvo antes da primeira pintura, para não piscar a cor errada
