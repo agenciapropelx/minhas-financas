@@ -17,7 +17,7 @@ import { saidasPorDia } from '@/lib/daily';
 import { fmtBRL } from '@/lib/money';
 import { monthName, shiftMonth } from '@/lib/months';
 import { compararCategorias } from '@/lib/compare';
-import { gastosPorCategoria, monthTotals } from '@/lib/totals';
+import { gastosPorCategoria, monthTotals, saldoAcumulado } from '@/lib/totals';
 
 function greeting() {
   const h = new Date().getHours();
@@ -90,6 +90,11 @@ export default function Home() {
   const txsProximo = (allTxs.data ?? []).filter(x => x.month === proximoMes);
   const tp = monthTotals(txsProximo);
 
+  // saldo acumulado: o resultado de cada mês herda o que sobrou (ou faltou) nos anteriores
+  const mesesComDados = [...new Set([...(allMonths.data ?? []).map(m => m.month), ...(allTxs.data ?? []).map(x => x.month)])];
+  const acumulado = saldoAcumulado(mesesComDados, allTxs.data ?? [], month);
+  const acumuladoProximo = saldoAcumulado(mesesComDados, allTxs.data ?? [], proximoMes);
+
   // pendentes: lançamentos fora do cartão não pagos + uma linha com o que falta pagar da fatura
   const faturaPendente = txs.filter(x => x.cartao && !x.pago).reduce((s, x) => s + Number(x.valor), 0);
   const pend: { desc: string; tipo: string; dia: number | null; valor: number }[] = [
@@ -123,8 +128,9 @@ export default function Home() {
 
       <div className="summary">
         <div className="card">
-          <div className="label">Resultado do período <Info texto="Receitas − despesas do mês (inclui a fatura do cartão)" /></div>
-          <div className="value" style={t.saldo < 0 ? { color: 'var(--red)' } : undefined}>{fmtBRL(t.saldo)}</div>
+          <div className="label">Saldo acumulado <Info texto="Resultado do mês somado ao que sobrou (ou faltou) nos meses anteriores — considera tudo que está lançado, pago ou não" /></div>
+          <div className="value" style={acumulado < 0 ? { color: 'var(--red)' } : undefined}>{fmtBRL(acumulado)}</div>
+          <div className="sub">resultado do mês: {fmtBRL(t.saldo)}</div>
         </div>
         <div className="card">
           <div className="label">Receitas <Info texto="Soma das entradas do mês" /></div>
@@ -150,7 +156,8 @@ export default function Home() {
           <div className="forecast-row">
             <div><span className="sub">Receitas</span><div className="value green">{fmtBRL(tp.entradas)}</div></div>
             <div><span className="sub">Despesas</span><div className="value red">{fmtBRL(tp.saidas)}</div></div>
-            <div><span className="sub">Saldo previsto</span><div className="value" style={tp.saldo < 0 ? { color: 'var(--red)' } : undefined}>{fmtBRL(tp.saldo)}</div></div>
+            <div><span className="sub">Resultado do mês</span><div className="value" style={tp.saldo < 0 ? { color: 'var(--red)' } : undefined}>{fmtBRL(tp.saldo)}</div></div>
+            <div><span className="sub">Saldo acumulado previsto</span><div className="value" style={acumuladoProximo < 0 ? { color: 'var(--red)' } : undefined}>{fmtBRL(acumuladoProximo)}</div></div>
           </div>
         </div>
       )}

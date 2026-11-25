@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { Suspense, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PageHead from '@/components/PageHead';
@@ -33,6 +34,10 @@ function Lancamentos() {
   const saidas = monthTotals(txs).saidas;
   const daCategoria = (t: Transaction) => t.type !== 'entrada' && (t.categoria || 'Outros') === cat;
   const filtrados = cat ? txs.filter(daCategoria).sort(porDia) : txs;
+  // sem filtro, os itens do cartão não aparecem um a um: entram só pela soma da fatura (detalhe na aba Cartão)
+  const itensCartao = txs.filter(t => t.cartao);
+  const faturaTotal = monthTotals(txs).cartao.total;
+  const visiveis = cat ? filtrados : filtrados.filter(t => !t.cartao);
   const totalCat = cat ? gastos.find(([c]) => c === cat)?.[1] ?? 0 : 0;
 
   function escolher(c: string | null) {
@@ -71,9 +76,20 @@ function Lancamentos() {
 
           {!cat && <TxSection title="Entradas" type="entrada" color="green" txs={txs.filter(t => t.type === 'entrada')} />}
           <TxSection key={`fixo-${cat}`} title="Custos fixos" type="fixo" color="red" categoriaPadrao={cat}
-            txs={filtrados.filter(t => t.type === 'fixo')} />
+            txs={visiveis.filter(t => t.type === 'fixo')} />
           <TxSection key={`variavel-${cat}`} title="Custos variáveis" type="variavel" color="red" categoriaPadrao={cat}
-            txs={filtrados.filter(t => t.type === 'variavel')} />
+            txs={visiveis.filter(t => t.type === 'variavel')} />
+          {!cat && itensCartao.length > 0 && (
+            <div className="section">
+              <div className="section-header">
+                <h2>💳 Fatura do cartão</h2>
+                <span className="total" style={{ color: 'var(--red)' }}>{fmtBRL(faturaTotal)}</span>
+              </div>
+              <div className="card-sub">
+                {itensCartao.length} lançamento{itensCartao.length === 1 ? '' : 's'} no cartão neste mês, somados aqui em um valor só. <Link href="/cartao" className="hint-link">ver detalhes no Cartão</Link>
+              </div>
+            </div>
+          )}
         </>
       )}
     </>

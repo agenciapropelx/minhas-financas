@@ -5,7 +5,7 @@ import { Transaction } from '@/lib/types';
 function tx(p: Partial<Transaction>): Transaction {
   return {
     id: 'x', month: '2026-07', type: 'fixo', descricao: 'T', valor: 100, categoria: 'Moradia',
-    dia_vencimento: null, pago: false, cartao: false, parcela: null, parcelas: null, grupo: null, ...p,
+    dia_vencimento: null, pago: false, cartao: false, parcela: null, parcelas: null, grupo: null, data_compra: null, ...p,
   };
 }
 

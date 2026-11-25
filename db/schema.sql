@@ -30,6 +30,7 @@ create table transactions (
   parcela int,                             -- compras parceladas: parcela atual
   parcelas int,                            -- compras parceladas: total
   grupo uuid,                              -- compras parceladas: id comum às parcelas
+  data_compra date,                        -- compras no cartão: data real da compra
   created_at timestamptz not null default now()
 );
 

@@ -8,7 +8,7 @@ import { Transaction } from '@/lib/types';
 function tx(p: Partial<Transaction>): Transaction {
   return {
     id: 'x', month: '2026-09', type: 'variavel', descricao: 'T', valor: 100, categoria: 'Outros',
-    dia_vencimento: 1, pago: false, cartao: false, parcela: null, parcelas: null, grupo: null, ...p,
+    dia_vencimento: 1, pago: false, cartao: false, parcela: null, parcelas: null, grupo: null, data_compra: null, ...p,
   };
 }
 

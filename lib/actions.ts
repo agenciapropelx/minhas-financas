@@ -34,14 +34,14 @@ export async function listMonths(): Promise<MonthRow[]> {
 export async function listTransactions(month: string): Promise<Transaction[]> {
   const uid = await userId();
   return await sql`select id, month, type, descricao, valor::float as valor, categoria, dia_vencimento, pago,
-    cartao, parcela, parcelas, grupo
+    cartao, parcela, parcelas, grupo, to_char(data_compra, 'YYYY-MM-DD') as data_compra
     from transactions where user_id = ${uid} and month = ${month} order by created_at` as Transaction[];
 }
 
 export async function listAllTransactions(): Promise<Transaction[]> {
   const uid = await userId();
   return await sql`select id, month, type, descricao, valor::float as valor, categoria, dia_vencimento, pago,
-    cartao, parcela, parcelas, grupo
+    cartao, parcela, parcelas, grupo, to_char(data_compra, 'YYYY-MM-DD') as data_compra
     from transactions where user_id = ${uid}` as Transaction[];
 }
 
@@ -151,9 +151,9 @@ export async function insertCompraCartao(c: {
   const parcelas = gerarParcelas({ valorTotal: c.valorTotal, parcelas: n, dataCompra: c.dataCompra, mesBase: c.mesBase, card });
   const grupo = n > 1 ? randomUUID() : null;
   for (const p of parcelas) {
-    await sql`insert into transactions (user_id, month, type, descricao, valor, categoria, dia_vencimento, cartao, parcela, parcelas, grupo)
+    await sql`insert into transactions (user_id, month, type, descricao, valor, categoria, dia_vencimento, cartao, parcela, parcelas, grupo, data_compra)
       values (${uid}, ${p.month}, ${c.type}, ${c.descricao}, ${p.valor}, ${c.categoria}, ${p.dia}, true,
-        ${grupo ? p.parcela : null}, ${grupo ? n : null}, ${grupo})`;
+        ${grupo ? p.parcela : null}, ${grupo ? n : null}, ${grupo}, ${c.dataCompra})`;
   }
   const primeira = monthName(parcelas[0].month).toLowerCase();
   return n > 1
@@ -186,7 +186,7 @@ export async function exportAll(): Promise<Record<string, unknown>> {
   const uid = await userId();
   const [months, transactions, cards, budgets] = await Promise.all([
     sql`select month, meta::float as meta, nota from months where user_id = ${uid} order by month`,
-    sql`select month, type, descricao, valor::float as valor, categoria, dia_vencimento, pago, cartao, parcela, parcelas, grupo
+    sql`select month, type, descricao, valor::float as valor, categoria, dia_vencimento, pago, cartao, parcela, parcelas, grupo, to_char(data_compra, 'YYYY-MM-DD') as data_compra
       from transactions where user_id = ${uid}`,
     sql`select nome, dia_fechamento, dia_vencimento, limite::float as limite from cards where user_id = ${uid}`,
     sql`select month, categoria, limite::float as limite from budgets where user_id = ${uid}`,

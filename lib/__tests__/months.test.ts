@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dataParaMesDia, mesDiaParaData, monthName, shiftMonth, shortMonth, todayKey } from '@/lib/months';
+import { dataParaMesDia, hojeISO, mesDiaParaData, rotuloData, monthName, shiftMonth, shortMonth, todayKey } from '@/lib/months';
 
 describe('shiftMonth', () => {
   it('avança dentro do ano', () => expect(shiftMonth('2026-07', 1)).toBe('2026-08'));
@@ -33,4 +33,13 @@ describe('vencimento (data ↔ mês/dia)', () => {
   });
   it('reconstrói a data para o input', () => expect(mesDiaParaData('2026-12', 5)).toBe('2026-12-05'));
   it('sem dia → vazio', () => expect(mesDiaParaData('2026-12', null)).toBe(''));
+});
+
+describe('hojeISO / rotuloData', () => {
+  it('formata a data local', () => expect(hojeISO(new Date(2026, 11, 5))).toBe('2026-12-05'));
+  const base = { month: '2026-12', dia_vencimento: 10, cartao: false, data_compra: null };
+  it('despesa comum: dd/mm do mês', () => expect(rotuloData(base)).toBe('10/12'));
+  it('cartão com data real', () => expect(rotuloData({ ...base, cartao: true, data_compra: '2026-11-28' })).toBe('28/11'));
+  it('cartão sem data real: dia', () => expect(rotuloData({ ...base, cartao: true })).toBe('dia 10'));
+  it('sem dia', () => expect(rotuloData({ ...base, dia_vencimento: null })).toBe('—'));
 });
