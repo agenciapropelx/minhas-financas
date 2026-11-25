@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { deleteTransaction, insertTransaction, setTransactionPago, updateTransaction } from '@/lib/actions';
 import { CATEGORIAS } from '@/lib/categories';
 import { fmtBRL, parseValorBR } from '@/lib/money';
+import { dataParaMesDia, mesDiaParaData, monthName } from '@/lib/months';
 import { Transaction, TxType } from '@/lib/types';
 import { useMonth, useToast } from './Providers';
 
@@ -31,7 +32,7 @@ export default function TxSection({ title, type, txs, color, categoriaPadrao }: 
     setDesc(t.descricao);
     setValor(Number(t.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 }));
     setCat(t.categoria ?? catInicial);
-    setDia(t.dia_vencimento ? String(t.dia_vencimento) : '');
+    setDia(mesDiaParaData(t.month, t.dia_vencimento));
     setCartao(t.cartao);
   }
 
@@ -44,10 +45,12 @@ export default function TxSection({ title, type, txs, color, categoriaPadrao }: 
     const v = parseValorBR(valor);
     if (!desc.trim()) { toast('Digite uma descrição'); return; }
     if (isNaN(v) || v <= 0) { toast('Valor inválido — use por ex. 150,00'); return; }
+    // a data de vencimento define o mês do lançamento (sem data: mês aberto na tela)
+    const venc = !isEntrada ? dataParaMesDia(dia) : null;
     const row = {
-      month, type, descricao: desc.trim(), valor: v,
+      month: venc?.month ?? month, type, descricao: desc.trim(), valor: v,
       categoria: isEntrada ? null : cat,
-      dia_vencimento: !isEntrada && dia ? Number(dia) : null,
+      dia_vencimento: venc?.dia ?? null,
       cartao: !isEntrada && cartao,
     };
     try {
@@ -59,7 +62,8 @@ export default function TxSection({ title, type, txs, color, categoriaPadrao }: 
     }
     reset();
     qc.invalidateQueries();
-    toast(editing ? 'Lançamento atualizado' : 'Lançamento adicionado');
+    const noutroMes = row.month !== month ? ` em ${monthName(row.month).toLowerCase()}` : '';
+    toast((editing ? 'Lançamento atualizado' : 'Lançamento adicionado') + noutroMes);
   }
 
   async function toggle(t: Transaction) {
@@ -132,7 +136,7 @@ export default function TxSection({ title, type, txs, color, categoriaPadrao }: 
           </select>
         )}
         {!isEntrada && (
-          <input className="f-dia" type="number" min={1} max={31} placeholder="Dia venc." value={dia} onChange={e => setDia(e.target.value)} aria-label="Dia do vencimento" />
+          <input className="f-dia" type="date" value={dia} onChange={e => setDia(e.target.value)} aria-label="Data de vencimento" title="Data de vencimento — o lançamento entra no mês desta data" />
         )}
         <input className="f-val" placeholder="Valor (R$)" value={valor} onChange={e => setValor(e.target.value)} autoComplete="off" />
         {!isEntrada && (

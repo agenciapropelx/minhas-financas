@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { monthName, shiftMonth, shortMonth, todayKey } from '@/lib/months';
+import { dataParaMesDia, mesDiaParaData, monthName, shiftMonth, shortMonth, todayKey } from '@/lib/months';
 
 describe('shiftMonth', () => {
   it('avança dentro do ano', () => expect(shiftMonth('2026-07', 1)).toBe('2026-08'));
@@ -23,4 +23,14 @@ describe('nomes', () => {
     expect(shortMonth('2026-07').toLowerCase().startsWith('jul')).toBe(true);
     expect(shortMonth('2026-07')).not.toContain('.');
   });
+});
+
+describe('vencimento (data ↔ mês/dia)', () => {
+  it('extrai mês e dia da data', () => expect(dataParaMesDia('2026-12-10')).toEqual({ month: '2026-12', dia: 10 }));
+  it('data vazia ou inválida → null', () => {
+    expect(dataParaMesDia('')).toBeNull();
+    expect(dataParaMesDia('10/12/2026')).toBeNull();
+  });
+  it('reconstrói a data para o input', () => expect(mesDiaParaData('2026-12', 5)).toBe('2026-12-05'));
+  it('sem dia → vazio', () => expect(mesDiaParaData('2026-12', null)).toBe(''));
 });

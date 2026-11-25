@@ -85,6 +85,11 @@ export default function Home() {
 
   const diario = saidasPorDia(txs, month);
 
+  // previsão do mês seguinte: o que já foi lançado (vencimentos, parcelas do cartão, entradas previstas)
+  const proximoMes = shiftMonth(month, 1);
+  const txsProximo = (allTxs.data ?? []).filter(x => x.month === proximoMes);
+  const tp = monthTotals(txsProximo);
+
   // pendentes: lançamentos fora do cartão não pagos + uma linha com o que falta pagar da fatura
   const faturaPendente = txs.filter(x => x.cartao && !x.pago).reduce((s, x) => s + Number(x.valor), 0);
   const pend: { desc: string; tipo: string; dia: number | null; valor: number }[] = [
@@ -138,6 +143,17 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      {txsProximo.length > 0 && (
+        <div className="card forecast">
+          <div className="label">Previsto para {monthName(proximoMes).toLowerCase()} <Info texto="Tudo que já está lançado com vencimento no mês seguinte, incluindo parcelas do cartão" /></div>
+          <div className="forecast-row">
+            <div><span className="sub">Receitas</span><div className="value green">{fmtBRL(tp.entradas)}</div></div>
+            <div><span className="sub">Despesas</span><div className="value red">{fmtBRL(tp.saidas)}</div></div>
+            <div><span className="sub">Saldo previsto</span><div className="value" style={tp.saldo < 0 ? { color: 'var(--red)' } : undefined}>{fmtBRL(tp.saldo)}</div></div>
+          </div>
+        </div>
+      )}
 
       <div className="charts">
         <div className="card chart-card">

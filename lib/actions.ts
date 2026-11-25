@@ -91,6 +91,8 @@ export interface TxInput {
 
 export async function insertTransaction(t: TxInput): Promise<void> {
   const uid = await userId();
+  // vencimento em outro mês (ex.: dezembro): cria o mês na hora, sem precisar de "Iniciar mês"
+  await iniciarMesParaUsuario(uid, t.month);
   await sql`insert into transactions (user_id, month, type, descricao, valor, categoria, dia_vencimento, cartao)
     values (${uid}, ${t.month}, ${t.type}, ${t.descricao}, ${t.valor}, ${t.categoria}, ${t.dia_vencimento},
       ${t.type !== 'entrada' && t.cartao})`;
@@ -98,7 +100,8 @@ export async function insertTransaction(t: TxInput): Promise<void> {
 
 export async function updateTransaction(id: string, t: TxInput): Promise<void> {
   const uid = await userId();
-  await sql`update transactions set descricao = ${t.descricao}, valor = ${t.valor},
+  await iniciarMesParaUsuario(uid, t.month);
+  await sql`update transactions set month = ${t.month}, descricao = ${t.descricao}, valor = ${t.valor},
     categoria = ${t.categoria}, dia_vencimento = ${t.dia_vencimento}, cartao = ${t.type !== 'entrada' && t.cartao}
     where id = ${id} and user_id = ${uid}`;
 }
