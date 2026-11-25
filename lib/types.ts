@@ -6,13 +6,14 @@ export interface Transaction {
   type: TxType;
   descricao: string;
   valor: number;
-  categoria: string | null; // null para entradas
-  dia_vencimento: number | null; // null para entradas; no cartão, o dia da compra
+  categoria: string | null; // entradas: origem (cliente, venda, empréstimo…)
+  dia_vencimento: number | null; // dia do vencimento (entradas: dia do recebimento); no cartão, o dia da compra
   pago: boolean; // para entradas significa "recebido"
   cartao: boolean; // pago no cartão de crédito
   parcela: number | null; // compras parceladas: número desta parcela (1-based)
   parcelas: number | null; // compras parceladas: total de parcelas
   grupo: string | null; // compras parceladas: id compartilhado por todas as parcelas
+  data_compra: string | null; // cartão: data real da compra ('YYYY-MM-DD')
 }
 
 export interface MonthRow {

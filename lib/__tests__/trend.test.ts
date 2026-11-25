@@ -5,7 +5,7 @@ import { Transaction } from '@/lib/types';
 function tx(month: string, categoria: string, valor: number, type: Transaction['type'] = 'variavel'): Transaction {
   return {
     id: 'x', month, type, descricao: 'T', valor, categoria, dia_vencimento: 1, pago: true,
-    cartao: false, parcela: null, parcelas: null, grupo: null,
+    cartao: false, parcela: null, parcelas: null, grupo: null, data_compra: null,
   };
 }
 

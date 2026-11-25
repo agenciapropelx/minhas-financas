@@ -12,7 +12,7 @@ import {
 import { evolucaoCartao, limiteUsado, variacaoPercentual } from '@/lib/cartao';
 import { CATEGORIAS } from '@/lib/categories';
 import { fmtBRL, parseValorBR } from '@/lib/money';
-import { monthName, todayKey } from '@/lib/months';
+import { hojeISO, monthName, rotuloData, todayKey } from '@/lib/months';
 import { monthTotals } from '@/lib/totals';
 import { Card, Transaction } from '@/lib/types';
 
@@ -74,7 +74,7 @@ export default function Cartao() {
   const [cat, setCat] = useState<string>(CATEGORIAS[0]);
   const [tipo, setTipo] = useState<'variavel' | 'fixo'>('variavel');
   const [parcelas, setParcelas] = useState('1');
-  const [data, setData] = useState('');
+  const [data, setData] = useState(hojeISO); // começa em hoje; dá para escolher outra data
   const [enviando, setEnviando] = useState(false);
 
   if ([cardQ, txsQ, allTxs, allMonths].some(q => q.isLoading)) return <p className="empty-row">Carregando…</p>;
@@ -105,7 +105,7 @@ export default function Cartao() {
       const msg = await insertCompraCartao({
         descricao: desc.trim(), valorTotal: v, parcelas: n, categoria: cat, type: tipo, dataCompra: data || null, mesBase: month,
       });
-      setDesc(''); setValor(''); setParcelas('1'); setData('');
+      setDesc(''); setValor(''); setParcelas('1'); setData(hojeISO());
       qc.invalidateQueries();
       toast(msg);
     } catch {
@@ -241,7 +241,7 @@ export default function Cartao() {
                 <th>Descrição</th>
                 <th className="hide-mobile">Tipo</th>
                 <th className="hide-mobile">Categoria</th>
-                <th className="center hide-mobile">Dia</th>
+                <th className="center hide-mobile">Compra</th>
                 <th className="num">Valor</th>
                 <th className="center">Status</th>
                 <th className="center" style={{ width: 50 }} />
@@ -261,7 +261,7 @@ export default function Cartao() {
                   </td>
                   <td className="hide-mobile"><span className="badge">{t.type === 'fixo' ? 'Fixo' : 'Variável'}</span></td>
                   <td className="hide-mobile"><span className="badge">{t.categoria || 'Outros'}</span></td>
-                  <td className="center hide-mobile">{t.dia_vencimento ? `dia ${t.dia_vencimento}` : '—'}</td>
+                  <td className="center hide-mobile">{rotuloData(t)}</td>
                   <td className="num">{fmtBRL(Number(t.valor))}</td>
                   <td className="center">
                     <button className={`status-btn ${t.pago ? 'pago' : 'pendente'}`} onClick={() => alternar(t)}>
@@ -289,11 +289,11 @@ export default function Cartao() {
           <input className="f-dia" type="number" min={1} max={48} placeholder="Parcelas" title="Número de parcelas"
             value={tipo === 'fixo' ? '1' : parcelas} disabled={tipo === 'fixo'} onChange={e => setParcelas(e.target.value)} />
           <input className="f-dia" style={{ width: 150 }} type="date" value={data} onChange={e => setData(e.target.value)}
-            aria-label="Data da compra (opcional)" title="Data da compra (opcional)" />
+            aria-label="Data da compra" title="Data da compra — o fechamento do cartão define em qual fatura ela entra" />
           <button type="submit" disabled={enviando}>{enviando ? 'Salvando…' : 'Adicionar'}</button>
         </form>
         <div className="card-sub" style={{ marginTop: 8 }}>
-          Sem data, a compra entra na fatura de {monthName(month).toLowerCase()}. Parcelada vira um lançamento em cada mês (1/10, 2/10…).
+          A data da compra e o fechamento do cartão definem a primeira fatura (compra depois do fechamento vai para a fatura seguinte). Parcelada vira um lançamento em cada fatura (1/10, 2/10…). Sem data, entra na fatura de {monthName(month).toLowerCase()}.
           Fixos marcados aqui são copiados para os próximos meses, como os outros fixos.
         </div>
       </div>

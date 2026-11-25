@@ -263,7 +263,7 @@ tr.paid td.num { text-decoration: line-through; font-weight: 400; }
 .add-form .f-desc { flex: 2; min-width: 160px; }
 .add-form .f-val { width: 120px; }
 .add-form .f-cat { width: 150px; }
-.add-form .f-dia { width: 92px; }
+.add-form .f-dia { width: 150px; }
 .add-form button[type=submit] {
   background: var(--green); color: #fff; border: none; font-weight: 600;
   padding: 10px 20px; border-radius: 999px; font-size: 14px;
@@ -619,3 +619,8 @@ a.cat-link:hover .cat-name { color: var(--green); }
   .pill { flex-shrink: 0; }
   .cal-hint { margin-left: 0; width: 100%; }
 }
+
+.forecast { margin-bottom: 18px; }
+.forecast-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.forecast-row .value { font-size: 20px; }
+@media (max-width: 720px) { .forecast-row { grid-template-columns: repeat(2, 1fr); } .forecast-row .value { font-size: 16px; } }
